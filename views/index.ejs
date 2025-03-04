@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <h1>JWT 실습</h1>
+  <div id="info">
+
+  </div>
+</body>
+<script>
+  let chatForm;
+  let socket;
+  let ul;
+  (async function () {
+    const info = document.querySelector("#info");
+
+    try {
+      // 쿠키에서 토큰 추출하기
+      const cookies = document.cookie.split(";");
+      const tokenCookie = cookies.find((item) => item.trim().startsWith("token="));
+      let data = "";
+      if (!tokenCookie) {
+        // 토큰이 없으면 로그인 링크 표시
+        data = `<a href="/login">로그인</a><br><a href="/join">회원가입</a>`;
+        info.innerHTML = data;
+        return;
+      }
+      // 토큰 값만 추출(token= 부분 제거)
+      const token = tokenCookie.trim().substring(6);
+
+      // 토큰 검증 요청({}는 데이터보내는 부분)
+      // 이름을 불러와야해서 검증
+      const res = await axios.post(
+        "/verify",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.result) {
+        data = `<button type="button" onClick="logout()">로그아웃</button>
+        <div>${res.data.name}님 환영합니다.</div><br>
+          <button onClick="chat()">채팅</button>
+        
+        `;
+      }
+      info.innerHTML = data;
+    } catch (error) {
+      console.error("Authentication error:", error);
+      info.innerHTML = `<p>인증 오류가 발생했습니다.</p><a href="/login">로그인</a>`;
+    }
+  })();
+
+  // 로그아웃 함수
+  function logout() {
+    // 쿠키 삭제
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // 페이지 새로 고침
+    window.location.reload();
+  }
+
+</script>
+
+</html>

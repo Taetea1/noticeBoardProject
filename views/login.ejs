@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <h1>로그인</h1>
+  <!-- <div class="loginbox"> -->
+  <form name="login-form">
+    <input type="text" id="id" placeholder="ID" /><br>
+    <input type="password" id="pw" placeholder="PW" /><br>
+    <input type="button" class="button" onclick="login()" value="로그인" /><br>
+  </form>
+</body>
+<script>
+  const login = async () => {
+    // 입력값 가져오기
+    const id = document.getElementById("id").value;
+    const pw = document.getElementById("pw").value;
+
+    // 유효성 검사
+    if (!id || !pw) {
+      alert("아이디와 비밀번호를 모두 입력해주세요");
+      return;
+    }
+
+    // 로그인 요청
+    await axios.post("/login", { id, pw })
+      .then((result) => {
+        if (result.data.result) {
+          // 토큰이 있으면 홈으로 이동
+          window.location.href = "/";
+        } else {
+          alert(result.data.message)
+        }
+      });
+  }
+
+</script>
+
+</html>

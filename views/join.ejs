@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <h1>회원가입</h1>
+  <form name="join-form">
+    <input type="text" id="userid" placeholder="ID" /><br>
+    <input type="password" id="pw" placeholder="PW" /><br>
+    <input type="text" id="name" placeholder="이름" /><br>
+    <input type="button" class="button" onclick="join()" value="회원가입" /><br>
+  </form>
+</body>
+<script>
+  const join = async () => {
+    // 입력값 가져오기
+    const id = document.getElementById("userid").value;
+    const pw = document.getElementById("pw").value;
+    const name = document.getElementById("name").value;
+
+    // 유효성 검사
+    if (!id || !pw || !name) {
+      alert("아이디와 비밀번호, 이름을 모두 입력해주세요");
+      return;
+    }
+
+    // 회원가입 요청
+    await axios.post("/join", { id, pw, name })
+      .then((result) => {
+        if (result.data.result) {
+          alert("회원가입이 완료되었습니다.");
+          window.location.href = "/login";
+        } else {
+          alert(result.data.message);
+        }
+      });
+  }
+
+</script>
+
+</html>
